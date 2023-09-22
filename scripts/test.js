@@ -97,7 +97,7 @@
         inputElement.setAttribute('name', 'answer');
         inputElement.setAttribute('value', answer.id);
         if (chosenOption && chosenOption.chosenAnswerId === answer.id) {
-          inputElement.setAttribute('checked', 'checked')
+          inputElement.setAttribute('checked', 'checked');
         }
 
         inputElement.onchange = function () {
@@ -153,6 +153,8 @@
           questionId: activeQuestion.id,
           chosenAnswerId: chosenAnswerId,
         })
+        console.log()
+        localStorage.setItem('idArr', JSON.stringify(this.userResult));
       }
 
       if (action === 'next' || action === 'pass') {
@@ -187,6 +189,7 @@
       const name = url.searchParams.get('name');
       const lastName = url.searchParams.get('lastName');
       const email = url.searchParams.get('email');
+
       const xhr = new XMLHttpRequest();
       xhr.open('POST', 'https://testologia.site/pass-quiz?id=' + id, false);
       xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
@@ -196,14 +199,20 @@
         email: email,
         results: this.userResult,
       }));
+      localStorage.setItem('results', this.userResult);
+      sessionStorage.setItem('name', name);
+      sessionStorage.setItem('lastName', lastName);
+      sessionStorage.setItem('email', email)
       if (xhr.status === 200 && xhr.responseText) {
         let result = null;
         try {
           result = JSON.parse(xhr.responseText);
+
         } catch (e) {
           location.href = 'index.html';
         }
         if (result) {
+          console.log(result)
           location.href = 'result.html?score=' + result.score + '&total=' + result.total +  '&id=' + id ;
         }
 

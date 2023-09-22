@@ -114,3 +114,10 @@ input[type="radio"] {
   place-content: center;
 }
 
+.right[type="radio"]{
+  border: 6px solid #5FDC33;;
+}
+
+.wrong[type="radio"]{
+  border: 6px solid #DC3333;
+}
