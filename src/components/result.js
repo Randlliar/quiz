@@ -1,7 +1,7 @@
-(function () {
-  const Result = {
-    rightAnswers: null,
-    init() {
+export class Result  {
+
+    constructor() {
+      this.rightAnswers = null;
       const that = this;
       const url = new URL(location.href);
       console.log(url)
@@ -11,7 +11,7 @@
         that.showRightAnswers();
       }
 
-    },
+    }
     showRightAnswers() {
       const url = new URL(location.href);
       console.log(url)
@@ -26,5 +26,3 @@
     }
   }
 
-  Result.init();
-})()

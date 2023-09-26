@@ -1,36 +1,39 @@
-(function () {
-  const CheckResult = {
-    answers: [],
-    test: [],
-    questions: [],
-    backToResults: null,
-    init() {
-      const that = this;
-      // checkUserData();
-      const url = new URL(location.href);
-      const testId = url.searchParams.get('id');
-      //
+export class CheckResult {
 
-      const xhr = new XMLHttpRequest();
-      xhr.open('GET', 'https://testologia.site/get-quiz-right?id=' + testId, false);
-      xhr.send();
-      if (xhr.status === 200 && xhr.responseText) {
-        try {
-          this.answers = JSON.parse(xhr.responseText);
-        } catch (e) {
-          location.href = 'index.html';
-        }
-      } else {
+  constructor() {
+    this.answers = [];
+      this.test = [];
+      this.questions = [];
+      this.backToResults= null;
+
+    const that = this;
+    // checkUserData();
+    const url = new URL(location.href);
+    const testId = url.searchParams.get('id');
+    //
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', 'https://testologia.site/get-quiz-right?id=' + testId, false);
+    xhr.send();
+    if (xhr.status === 200 && xhr.responseText) {
+      try {
+        this.answers = JSON.parse(xhr.responseText);
+      } catch (e) {
         location.href = 'index.html';
       }
-      this.performer();
-      this.getHtmlItems();
-      this.isError();
-      this.backToResults = document.getElementById('result');
-      this.backToResults.onclick = function () {
-        that.goToResults();
-      }
-    },
+    } else {
+      location.href = 'index.html';
+    }
+    this.performer();
+    this.getHtmlItems();
+    this.isError();
+    this.backToResults = document.getElementById('result');
+    this.backToResults.onclick = function () {
+      that.goToResults();
+    }
+  }
+
+
     getHtmlItems() {
       const url = new URL(location.href);
       const testId = url.searchParams.get('id');
@@ -83,7 +86,7 @@
 
       })
 
-    },
+    }
     isError() {
       const questionResults = JSON.parse(localStorage.getItem('idArr'));
 
@@ -107,7 +110,7 @@
           checkResultOption.classList.add('wrong-answer');
         }
       }
-    },
+    }
     performer() {
       const name = sessionStorage.getItem('name');
       const email = sessionStorage.getItem('email');
@@ -116,7 +119,7 @@
       const checkResultName = document.getElementById('check-result-name');
       checkResultName.innerText = ' ' + name + ' ' + lastName + ', ' + email;
 
-    },
+    }
     goToResults(){
         const url = new URL(location.href);
         const score = url.searchParams.get('score');
@@ -127,8 +130,5 @@
         } else {
           location.href = 'index.html';
         }
-    },
-
+    }
   }
-  CheckResult.init();
-})()
