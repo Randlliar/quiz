@@ -1,8 +1,11 @@
+import {UrlManager} from "../utils/url-manager.js";
+
 export class Choice {
 
   constructor() {
     this.quizzes = [];
-    checkUserData();
+    this.routeParams = UrlManager.getQueryParams();
+    UrlManager.checkUserData(this.routeParams);
 
     const xhr = new XMLHttpRequest();
     xhr.open('GET', 'https://testologia.site/get-quizzes', false);
@@ -13,11 +16,11 @@ export class Choice {
         this.quizzes = JSON.parse(xhr.responseText);
 
       } catch (e) {
-        location.href = 'index.html';
+        location.href = '#/';
       }
       this.processQuizzes();
     } else {
-      location.href = 'index.html';
+      location.href = '#/';
     }
   }
 
@@ -41,7 +44,7 @@ export class Choice {
         choiceOptionArrowElement.className = 'choice-option-arrow';
 
         const choiceOptionImageElement = document.createElement('img');
-        choiceOptionImageElement.setAttribute('src', 'images/arrow.png');
+        choiceOptionImageElement.setAttribute('src', '../../images/arrow.png');
         choiceOptionImageElement.setAttribute('alt', 'Arrow');
 
         choiceOptionArrowElement.appendChild(choiceOptionImageElement);
@@ -56,7 +59,7 @@ export class Choice {
   chooseQuiz(element) {
     const dataId = element.getAttribute('data-id');
     if (dataId) {
-      location.href = 'test.html' + location.search + '&id=' + dataId;
+      location.href = '#/test?name=' + this.routeParams.name + '&lastName=' + this.routeParams.lastName + '&email=' + this.routeParams.email + '&id=' + dataId;
     }
   }
 }

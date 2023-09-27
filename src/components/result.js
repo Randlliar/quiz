@@ -1,11 +1,13 @@
+import {UrlManager} from "../utils/url-manager.js";
+
 export class Result  {
 
     constructor() {
       this.rightAnswers = null;
       const that = this;
-      const url = new URL(location.href);
-      console.log(url)
-      document.getElementById('result-score').innerText = url.searchParams.get('score') + '/' + url.searchParams.get('total');
+      this.routeParams = UrlManager.getQueryParams();
+      // console.log(url)
+      document.getElementById('result-score').innerText = this.routeParams.score + '/' + this.routeParams.total;
       this.rightAnswers = document.getElementById('right-answers');
       this.rightAnswers.onclick = function () {
         that.showRightAnswers();
@@ -13,15 +15,15 @@ export class Result  {
 
     }
     showRightAnswers() {
-      const url = new URL(location.href);
-      console.log(url)
-      const score = url.searchParams.get('score');
-      const total = url.searchParams.get('total');
-      const id = url.searchParams.get('id');
+      this.routeParams = UrlManager.getQueryParams();
+      // console.log(url)
+      const score = this.routeParams.score;
+      const total = this.routeParams.total;
+      const id = this.routeParams.id;
       if (score || total || id) {
-        location.href = 'check-result.html?score=' + score + '&total=' + total + '&id=' + id;
+        location.href = '#/check-result?score=' + score + '&total=' + total + '&id=' + id;
       } else {
-        location.href = 'index.html';
+        location.href = '#/';
       }
     }
   }

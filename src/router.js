@@ -1,4 +1,8 @@
 import {Form} from "./components/form.js";
+import {Choice} from "./components/choice.js";
+import {Test} from "./components/test.js";
+import {Result} from "./components/result.js";
+import {CheckResult} from "./components/check-result.js";
 
 export class Router {
   constructor() {
@@ -12,7 +16,7 @@ export class Router {
         }
       },
       {
-        route: '#/forms',
+        route: '#/form',
         title: 'Регистрация',
         template: 'templates/form.html',
         styles: 'styles/form.css',
@@ -20,12 +24,48 @@ export class Router {
           new Form();
         }
       },
+      {
+        route: '#/choice',
+        title: 'Выбор теста',
+        template: 'templates/choice.html',
+        styles: 'styles/choice.css',
+        load: () => {
+          new Choice();
+        }
+      },
+      {
+        route: '#/test',
+        title: 'Прохождение теста',
+        template: 'templates/test.html',
+        styles: 'styles/test.css',
+        load: () => {
+          new Test();
+        }
+      },
+      {
+        route: '#/result',
+        title: 'Результат теста',
+        template: 'templates/result.html',
+        styles: 'styles/result.css',
+        load: () => {
+          new Result();
+        }
+      },
+      {
+        route: '#/check-result',
+        title: 'Просмотр правильных ответов',
+        template: 'templates/check-result.html',
+        styles: 'styles/check-result.css',
+        load: () => {
+          new CheckResult();
+        }
+      },
     ]
   }
 
   async openRoute() {
     const newRoute = this.routes.find(item => {
-      return item.route === window.location.hash;
+      return item.route === window.location.hash.split('?')[0];
     });
 
     if (!newRoute) {

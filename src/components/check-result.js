@@ -19,10 +19,10 @@ export class CheckResult {
       try {
         this.answers = JSON.parse(xhr.responseText);
       } catch (e) {
-        location.href = 'index.html';
+        location.href = '#/';
       }
     } else {
-      location.href = 'index.html';
+      location.href = '#/';
     }
     this.performer();
     this.getHtmlItems();
@@ -126,9 +126,9 @@ export class CheckResult {
         const total = url.searchParams.get('total');
         const id = url.searchParams.get('id');
         if (score || total || id) {
-          location.href = 'result.html?score=' + score + '&total=' + total + '&id=' + id;
+          location.href = '#/resultl?score=' + score + '&total=' + total + '&id=' + id;
         } else {
-          location.href = 'index.html';
+          location.href = '#/';
         }
     }
   }
