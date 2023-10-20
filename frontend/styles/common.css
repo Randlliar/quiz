@@ -121,3 +121,28 @@ input[type="radio"] {
 .wrong[type="radio"]{
   border: 6px solid #DC3333;
 }
+
+.header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+}
+
+.profile-image {
+  margin-right: 5px;
+}
+
+.profile-user {
+  font-size: 18px;
+  line-height: 18px;
+}
+
+.profile-logout {
+  font-size: 12px;
+  line-height: 12px;
+}

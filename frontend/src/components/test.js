@@ -1,4 +1,7 @@
 import {UrlManager} from "../utils/url-manager.js";
+import {CustomHttp} from "../services/custom-http";
+import config from "../../config/config.js";
+import {Auth} from "../services/auth.js";
 
 export class Test {
 
@@ -13,26 +16,29 @@ export class Test {
     this.userResult = [];
 
     this.routeParams = UrlManager.getQueryParams();
-    UrlManager.checkUserData(this.routeParams);
-    if (this.routeParams.id) {
-      const xhr = new XMLHttpRequest();
-      xhr.open('GET', 'https://testologia.site/get-quiz?id=' + this.routeParams.id, false);
-      xhr.send();
-      if (xhr.status === 200 && xhr.responseText) {
-        try {
-          this.quiz = JSON.parse(xhr.responseText);
-        } catch (e) {
-          location.href = '#/';
-        }
-        this.startQuiz();
-      } else {
-        location.href = '#/';
-      }
-    } else {
-      location.href = '#/'
-    }
+
+    this.init();
   }
 
+  async init() {
+    if (this.routeParams.id) {
+
+      try {
+        const result = await CustomHttp.request(config.host + '/tests/' + this.routeParams.id)
+
+        if (result) {
+          if (result.error) {
+            throw new Error(result.error)
+          }
+
+          this.quiz = result;
+          this.startQuiz();
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }
 
   startQuiz() {
     this.progressBarElement = document.getElementById('progress-bar');
@@ -52,11 +58,11 @@ export class Test {
 
     const timerElement = document.getElementById('timer');
     let seconds = 59;
-    const interval = setInterval(function () {
+   this.interval = setInterval(function () {
       seconds--;
       timerElement.innerText = seconds;
       if (seconds === 0) {
-        clearInterval(interval);
+        clearInterval(this.interval);
         this.complete();
       }
     }.bind(this), 1000)
@@ -171,6 +177,7 @@ export class Test {
     }
 
     if (this.currentQuestionIndex > this.quiz.questions.length) {
+      clearInterval(this.interval);
       this.complete();
       return;
     }
@@ -191,35 +198,26 @@ export class Test {
     this.showQuestion();
   }
 
-  complete() {
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', 'https://testologia.site/pass-quiz?id=' + this.routeParams.id, false);
-    xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
-    xhr.send(JSON.stringify({
-      name: this.routeParams.name,
-      lastName: this.routeParams.lastName,
-      email: this.routeParams.email,
-      results: this.userResult,
-    }));
-    localStorage.setItem('results', this.userResult);
-    sessionStorage.setItem('name', this.routeParams.name);
-    sessionStorage.setItem('lastName', this.routeParams.lastName);
-    sessionStorage.setItem('email', this.routeParams.email)
-    if (xhr.status === 200 && xhr.responseText) {
-      let result = null;
-      try {
-        result = JSON.parse(xhr.responseText);
-
-      } catch (e) {
-        location.href = '#/';
-      }
-      if (result) {
-        console.log(result)
-        location.href = '#/result?score=' + result.score + '&total=' + result.total + '&id=' + this.routeParams.id;
-      }
-
-    } else {
+  async complete() {
+    const userInfo = Auth.getUserInfo();
+    if (!userInfo) {
       location.href = '#/';
+    }
+
+    try {
+      const result = await CustomHttp.request(config.host + '/tests/' + this.routeParams.id + '/pass', 'POST', {
+        userId: userInfo.userId,
+        results: this.userResult
+      })
+
+      if (result) {
+        if (result.error) {
+          throw new Error();
+        }
+        location.href = '#/result?id=' + this.routeParams.id;
+      }
+    } catch (error) {
+      console.log(error)
     }
   }
 }
