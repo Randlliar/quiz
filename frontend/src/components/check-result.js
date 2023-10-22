@@ -30,11 +30,14 @@ export class CheckResult {
       } else {
         location.href = '#/';
       }
-      this.getHtmlItems();
     }
     xhr.send();
+    this.getHtmlItems();
+    this.backToResults = document.getElementById('result');
+    this.backToResults.onclick = function () {
+      that.goToResults();
+    }
   }
-
 
 
   getHtmlItems() {
@@ -71,7 +74,6 @@ export class CheckResult {
           checkResultOption.className = ('check-result-question-option');
           checkResultOption.setAttribute('id', answer.id);
 
-
           const inputId = 'answer-' + answer.id;
 
           const checkResultOptionAnswerLabel = document.createElement('label');
@@ -92,37 +94,43 @@ export class CheckResult {
       })
       this.performer();
       this.isError();
-      this.backToResults = document.getElementById('result');
-      this.backToResults.onclick = function () {
-        that.goToResults();
-      }
     }
     xhr.send();
-
   }
 
-  isError() {
-    const questionResults = JSON.parse(localStorage.getItem('idArr'));
 
-    const questionId = questionResults.map(item => {
-      return item.questionId;
-    })
-    const chosenAnswer = questionResults.map(item => {
-      return item.chosenAnswerId;
-    })
+  async isError() {
+    const userInfo = Auth.getUserInfo();
+    console.log(userInfo)
+    if (!userInfo) {
+      location.href = '#/';
+    }
 
-    for (let i = 0; i < questionId.length; i++) {
-      const checkResultOption = document.getElementById(chosenAnswer[i]);
-      if (this.answers[i] === chosenAnswer[i]) {
-        let child = checkResultOption.firstChild;
-        child.classList.add('right');
-        checkResultOption.classList.add('right-answer');
+    if (this.routeParams.id) {
+      try {
+        const result = await CustomHttp.request(config.host + '/tests/' + this.routeParams.id + '/result/details?userId=' + userInfo.userId);
+        for (let i = 0; i < result.test.questions.length; i++) {
+          let selectedAnswer = result.test.questions[i].answers.find(item =>  item.correct !== undefined)
+          if (selectedAnswer === undefined) {
+            continue;
+          }
 
-      } else {
-        let child = checkResultOption.firstChild;
-        child.classList.add('wrong');
-        checkResultOption.classList.add('wrong-answer');
+          const checkResultOption = document.getElementById(selectedAnswer.id);
+
+          if (selectedAnswer.correct === false) {
+            let child = checkResultOption.firstChild;
+            child.classList.add('wrong');
+            checkResultOption.classList.add('wrong-answer');
+          } else {
+            let child = checkResultOption.firstChild;
+            child.classList.add('right');
+            checkResultOption.classList.add('right-answer');
+          }
+        }
+      } catch (error) {
+        console.log(error)
       }
+
     }
   }
 
@@ -130,21 +138,11 @@ export class CheckResult {
     const userInfo = Auth.getUserInfo();
     const name = userInfo.fullName;
     const email = userInfo.email;
-
-    console.log(name)
-
     const checkResultName = document.getElementById('check-result-name');
-
     checkResultName.innerText = ' ' + name + ', ' + email;
-
   }
 
   goToResults() {
-    const id = this.routeParams.id;
-    if ( id) {
-      location.href = '#/result?score=' + '&id=' + id;
-    } else {
-      location.href = '#/';
-    }
+    location.href = '#/result?id=' + this.routeParams.id;
   }
 }

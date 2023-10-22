@@ -134,9 +134,6 @@ export class Form {
             userId: result.userId,
             email: result.email
           })
-          // const userInfo = Auth.getUserInfo();
-          // const email = userInfo.email;
-          // console.log(email)
           location.href = '#/choice';
         }
       } catch (error) {

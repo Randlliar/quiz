@@ -53,7 +53,7 @@ export class Result {
     if (this.routeParams.id) {
       try {
         const result = await CustomHttp.request(config.host + '/tests/' + this.routeParams.id + '/result/details?userId=' + userInfo.userId);
-        console.log(result)
+        console.log('result', result)
 
         if (result) {
           if (result.error) {
@@ -68,17 +68,6 @@ export class Result {
       location.href = '#/';
 
     }
-
-    // this.routeParams = UrlManager.getQueryParams();
-    // // console.log(url)
-    // const score = this.routeParams.score;
-    // const total = this.routeParams.total;
-    // const id = this.routeParams.id;
-    // if (score || total || id) {
-    //   location.href = '#/check-result?score=' + score + '&total=' + total + '&id=' + id;
-    // } else {
-    //   location.href = '#/';
-    // }
   }
 }
 
